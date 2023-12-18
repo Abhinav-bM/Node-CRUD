@@ -17,25 +17,25 @@
             <div class="mb-3">
               <label class="form-label text-light">Name</label>
               <input type="text" class="form-control" id="inputName" placeholder="Enter your name">
-              <small id="nameError" class="text-light d-none">Please enter a valid name.</small>
+              <small id="nameError" class="text-dark d-none"><b>Please enter a valid name.</b></small>
             </div>
 
             <div class="mb-3">
                 <label class="form-label text-light">Age</label>
                 <input type="number" class="form-control" id="inputAge" placeholder="Enter your age">
-                <small id="ageError" class="text-light d-none">Please enter a valid age.</small>
+                <small id="ageError" class="text-dark  d-none"><b>Please enter a valid age.</b></small>
             </div>
             
             <div class="mb-3">
               <label class="form-label text-light">Email address</label>
               <input type="email" class="form-control" id="inputEmail" placeholder="Enter your email">
-              <small id="emailError" class="text-light d-none">Please enter a valid Email.</small>
+              <small id="emailError" class="text-dark  d-none"><b>Please enter a valid Email.</b></small>
             </div>
             
             <div class="mb-3">
                 <label class="form-label text-light ">Phone Number</label>
                 <input type="number" class="form-control" id="inputPhone" placeholder="Enter your phone number"> 
-                <small id="phoneError" class="text-light d-none">Please enter a valid phone Number.</small>   
+                <small id="phoneError" class="text-dark  d-none"><b>Please enter a valid phone Number.</b></small>   
             </div>
             
             <button type="submit" class="btn btn-primary" style="margin-bottom: 30%;">Submit</button>
@@ -142,10 +142,13 @@
                     console.error('Error', error);
                }
             );
+            
         }
+
+
     </script>
     
-
+   
     <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"></script>

@@ -1,20 +1,26 @@
 [
   {
-    "name": "Julian Shaffer",
-    "age": "94",
-    "email": "cyxomyzow@mailinator.com",
-    "phone": "8432658965"
+    "name": "hamim",
+    "age": "17",
+    "email": "hamim44@gmail.com",
+    "phone": "8888888888"
+  },
+  {
+    "name": "rohit",
+    "age": "25",
+    "email": "rohit@gmail.com",
+    "phone": "7777777777"
+  },
+  {
+    "name": "jeevan",
+    "age": "21",
+    "email": "jaavanjoji98@gmail.com",
+    "phone": "5555555555"
   },
   {
     "name": "Abhinav B Manoj",
     "age": "22",
     "email": "abhiabhinav480@gmail.com",
     "phone": "9567267515"
-  },
-  {
-    "name": "hamim",
-    "age": "10",
-    "email": "hamim44@gmail.com",
-    "phone": "8888888888"
   }
 ]

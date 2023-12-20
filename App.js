@@ -157,10 +157,10 @@ const server = http.createServer((req, res) => {
 
                 if (!isNaN(indexToUpdate) && indexToUpdate >= 0 && indexToUpdate < datas.length) {
                     
-                    datas[indexToUpdate].name = formData.get('name'); // Ensure 'name' matches the field name in the form
-                    datas[indexToUpdate].age = formData.get('age'); // Ensure 'age' matches the field name in the form
-                    datas[indexToUpdate].email = formData.get('email'); // Ensure 'email' matches the field name in the form
-                    datas[indexToUpdate].phone = formData.get('phone'); // Ensure 'phone' matches the field name in the form
+                    datas[indexToUpdate].name = formData.get('name');
+                    datas[indexToUpdate].age = formData.get('age'); 
+                    datas[indexToUpdate].email = formData.get('email'); 
+                    datas[indexToUpdate].phone = formData.get('phone'); 
 
                     // Write the updated data back to the file
                     fs.writeFile(usersDataFile, JSON.stringify(datas, null, 2), (err) => {

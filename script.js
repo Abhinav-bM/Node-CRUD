@@ -4,7 +4,8 @@ const fs = require('fs');
 const PORT = 3000;
 
 let mainPage = fs.readFileSync("./list.html", 'utf-8')
-const addEdit = fs.readFileSync('./add-edit.html', 'utf-8');
+const addDetails = fs.readFileSync('./add-details.html', 'utf-8');
+const editDetails = fs.readFileSync("./edit-details.html", "utf-8")
 const usersDataFile = './users.json';
 let datas = JSON.parse(fs.readFileSync('./users.json', 'utf-8'))
 
@@ -25,7 +26,7 @@ function listUpdate(datas){
             <td>${user.phone}</td>
 
             <td>
-                <form action="/Edit" onsubmit="return reload()">
+                <form action="/edit" method="get">
                     <input type="hidden" name="rowindex" value="${index}">
                     <button type="submit">Edit</button>
                 </form>
@@ -33,7 +34,7 @@ function listUpdate(datas){
 
             <td>
                 <form action="/delete" method="post">
-                    <input type="hidden" name="rowindex" value="${index }">
+                    <input type="hidden" name="rowindex" value="${index}">
                     <button type="submit">Delete</button>
                 </form>
             </td>   
@@ -47,57 +48,24 @@ function listUpdate(datas){
 }
 
 
-
+// Server
 const server = http.createServer((req, res) => {
-    if (req.method === 'POST' && req.url === '/delete') {
-                let body = '';
-        
-                req.on('data', (chunk) => {
-                    body += chunk;
-                });
-        
-                req.on('end', () => {
-                    try {
-                        const formData = new URLSearchParams(body);
-                        const rowToDelete = parseInt(formData.get('rowindex'));
-        
-                        if (!isNaN(rowToDelete) && rowToDelete >= 0 && rowToDelete < datas.length) {
-                            datas.splice(rowToDelete, 1);
-        
-                            fs.writeFile(usersDataFile, JSON.stringify(datas, null, 2), (err) => {
-                                if (err) {
-                                    console.error(err);
-                                    res.writeHead(500, { 'Content-Type': 'text/plain' });
-                                    res.end('Error deleting data');
-                                } else {
-                                    res.writeHead(302, { 'Location': '/' });
-                                    res.end();
-                                }
-                            });
-                        } else {
-                            res.writeHead(400, { 'Content-Type': 'text/plain' });
-                            res.end('Invalid row index');
-                        }
-                    } catch (error) {
-                        console.error('Error deleting row:', error);
-                        res.writeHead(400, { 'Content-Type': 'text/plain' });
-                        res.end('Error deleting row');
-                    }
-                });
-            }
-    
-    else if (req.method === 'GET' && (req.url === '/' || req.url === '/list')) {
+
+    if (req.method === 'GET' && (req.url === '/' || req.url === '/list')) {
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.write(listUpdate(datas));
         res.end();
     } 
     
-    else if (req.method === 'GET' && req.url === '/add-edit') {
+    else if (req.method === 'GET' && req.url === '/add-details') {
+        const url = new URL(`http://${req.headers.host}${req.url}`);
+        const index = parseInt(url.searchParams.get('rowindex'));
+
         res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.write(addEdit);
+        res.write(addDetails);
         res.end();
-    } 
-    
+    }
+
     else if (req.method === 'POST' && req.url === '/submit') {
         let body = '';
 
@@ -110,14 +78,12 @@ const server = http.createServer((req, res) => {
                 
                 const formData = JSON.parse(body);
 
-                // Read existing user data
                 let users = [];
                 if (fs.existsSync(usersDataFile)) {
                     const data = fs.readFileSync(usersDataFile, 'utf-8');
                     users = JSON.parse(data);
                 }
 
-                // Add new form data to users
                 users.push(formData);
 
                 // Write updated user data back to the file
@@ -145,12 +111,132 @@ const server = http.createServer((req, res) => {
         });
     } 
 
+
+    //update
+
+    //get for editing
+    else if (req.method === 'GET' && req.url.startsWith('/edit')) {
+        const url = new URL(`http://${req.headers.host}${req.url}`);
+        const index = parseInt(url.searchParams.get('rowindex'));
+    
+        if (!isNaN(index) && index >= 0 && index < datas.length) {
+            const userToUpdate = datas[index];
+            const editForm = fs.readFileSync('./edit-details.html', 'utf-8');
+    
+            const preFilledForm = editForm
+                .replace('id="inputName"', `id="inputName" value="${userToUpdate.name}"`)
+                .replace('id="inputAge"', `id="inputAge" value="${userToUpdate.age}"`)
+                .replace('id="inputEmail"', `id="inputEmail" value="${userToUpdate.email}"`)
+                .replace('id="inputPhone"', `id="inputPhone" value="${userToUpdate.phone}"`)
+                .replace('name="index"', `name="index" value="${index}"`);
+    
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.write(preFilledForm);
+            res.end();  
+        } else {
+            res.writeHead(400, { 'Content-Type': 'text/plain' });
+            res.end('Invalid index for editing');
+        }
+    }
+
+    // POST request for update
+    else if (req.method === 'POST' && req.url === '/update') {
+        let body = '';
+
+        req.on('data', (chunk) => {
+            body += chunk;
+        });
+
+        req.on('end', () => {
+            try {
+                
+                const formData = new URLSearchParams(body);
+
+                
+                const indexToUpdate = parseInt(formData.get('index'));
+
+                if (!isNaN(indexToUpdate) && indexToUpdate >= 0 && indexToUpdate < datas.length) {
+                    
+                    datas[indexToUpdate].name = formData.get('name'); // Ensure 'name' matches the field name in the form
+                    datas[indexToUpdate].age = formData.get('age'); // Ensure 'age' matches the field name in the form
+                    datas[indexToUpdate].email = formData.get('email'); // Ensure 'email' matches the field name in the form
+                    datas[indexToUpdate].phone = formData.get('phone'); // Ensure 'phone' matches the field name in the form
+
+                    // Write the updated data back to the file
+                    fs.writeFile(usersDataFile, JSON.stringify(datas, null, 2), (err) => {
+                        if (err) {
+                            console.error(err);
+                            res.writeHead(500, { 'Content-Type': 'text/plain' });
+                            res.end('Error updating data');
+                        } else {
+                            res.writeHead(302, { 'Location': '/' });
+                            res.end();
+                        }
+                    });
+                } else {
+                    res.writeHead(400, { 'Content-Type': 'text/plain' });
+                    res.end('Invalid index for update');
+                }
+            } catch (error) {
+                console.error('Error updating data:', error);
+                res.writeHead(400, { 'Content-Type': 'text/plain' });
+                res.end('Error updating data');
+            }
+        });
+    }
+ 
+  
+
+    // delete
+    else if (req.method === 'POST' && req.url === '/delete') {
+
+        let body = '';
+    
+        req.on('data', (chunk) => {
+            body += chunk;
+        });
+    
+        req.on('end', () => {
+            try {
+                const formData = new URLSearchParams(body);
+                const rowToDelete = parseInt(formData.get('rowindex'));
+    
+            if (!isNaN(rowToDelete) && rowToDelete >= 0 && rowToDelete < datas.length) {
+
+                datas.splice(rowToDelete, 1);
+    
+                fs.writeFile(usersDataFile, JSON.stringify(datas, null, 2), (err) => {
+                    if (err) {
+                        console.error(err);
+                        res.writeHead(500, { 'Content-Type': 'text/plain' });
+                        res.end('Error deleting data');
+                    } 
+                    else {
+                        res.writeHead(302, { 'Location': '/' });
+                        res.end();
+                    }
+                });
+            } 
+            else {
+                res.writeHead(400, { 'Content-Type': 'text/plain' });
+                res.end('Invalid row index');
+            }
+            } catch (error) {
+                console.error('Error deleting row:', error);
+                res.writeHead(400, { 'Content-Type': 'text/plain' });
+                res.end('Error deleting row');
+            }
+        });
+    }
+
     else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end('404 - Not Found');
     }
 
 });
+ 
+
 
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

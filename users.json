@@ -1,7 +1,7 @@
 [
   {
     "name": "hamim",
-    "age": "17",
+    "age": "18",
     "email": "hamim44@gmail.com",
     "phone": "8888888888"
   },
@@ -16,11 +16,5 @@
     "age": "21",
     "email": "jaavanjoji98@gmail.com",
     "phone": "5555555555"
-  },
-  {
-    "name": "Abhinav B Manoj",
-    "age": "22",
-    "email": "abhiabhinav480@gmail.com",
-    "phone": "9567267515"
   }
 ]
